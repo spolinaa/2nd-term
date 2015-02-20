@@ -1,5 +1,6 @@
-﻿// Some operations with Peano numbers
-// by Sokolova Polina  
+﻿(* Some operations (+, -, *, power) with Peano numbers
+(expectation: 2 h; reality: 4 h)
+by Sokolova Polina *)
 
 type Peano = Zero | S of Peano
 
