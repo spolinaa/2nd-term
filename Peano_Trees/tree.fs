@@ -8,9 +8,9 @@ let rec insert a t =
     match t with
     | Nil           -> Node(a, Nil, Nil)
     | Node(c, L, R) -> match compare a c with
-    | x when x < 0  -> Node(c, insert a L, R)
-    | x when x > 0  -> Node(c, L, insert a R)
-    | _             -> t
+                       | x when x < 0  -> Node(c, insert a L, R)
+                       | x when x > 0  -> Node(c, L, insert a R)
+                       | _             -> t
 
 let rec findInRight t =
     match t with
@@ -28,14 +28,14 @@ let rec remove a t =
     match t with
     | Nil           -> Nil
     | Node(c, L, R) -> match compare a c with
-    | x when x < 0  -> Node(c, remove a L, R)
-    | x when x > 0  -> Node(c, L, remove a R)
-    | _             -> match (L, R) with
-                       | Nil, Nil             -> Nil
-                       | L  , Nil             -> L
-                       | Nil, R               -> R
-                       | L  , Node(_, Nil, _) -> Node(findInLeft L, remove (findInLeft L) L, R)
-                       | _  , _               -> Node(findInRight R, L, remove (findInRight R) R)
+                       | x when x < 0  -> Node(c, remove a L, R)
+                       | x when x > 0  -> Node(c, L, remove a R)
+                       | _             -> match (L, R) with
+                                          | Nil, Nil             -> Nil
+                                          | L  , Nil             -> L
+                                          | Nil, R               -> R
+                                          | L  , Node(_, Nil, _) -> Node(findInLeft L, remove (findInLeft L) L, R)
+                                          | _  , _               -> Node(findInRight R, L, remove (findInRight R) R)
 
 let rec CLRprint t =
     match t with

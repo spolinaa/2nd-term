@@ -7,45 +7,48 @@ type Tree<'a> = Nil | Node of 'a * Tree<'a> * Tree<'a>
 let rec insert a t =
     match t with
     | Nil           -> Node(a, Nil, Nil)
-    | Node(c, L, R) -> if a = c then t
-                       elif a < c then Node(c, insert a L, R)
-                       else Node(c, L, insert a R)
+    | Node(c, L, R) -> match compare a c with
+                       | x when x < 0  -> Node(c, insert a L, R)
+                       | x when x > 0  -> Node(c, L, insert a R)
+                       | _             -> t
 
 let rec findInRight t =
     match t with
     | Nil             -> 0
-    | Node(c, Nil, R) -> c
-    | Node(c, L  , R) -> findInRight L
- 
+    | Node(c, Nil, _) -> c
+    | Node(_, L  , _) -> findInRight L
+
 let rec findInLeft t =
     match t with
     | Nil             -> 0
-    | Node(c, L, Nil) -> c
-    | Node(c, L, R  ) -> findInLeft R
+    | Node(c, _, Nil) -> c
+    | Node(c, _, R  ) -> findInLeft R
 
 let rec remove a t =
     match t with
     | Nil           -> Nil
-    | Node(c, L, R) -> if a < c then Node(c, remove a L, R)
-                       elif a > c then Node(c, L, remove a R)
-                       else match (L, R) with 
-                            | Nil, Nil           -> Nil
-                            | L  , Nil           -> L
-                            | Nil, R             -> R
-                            | L  , Node(C, l, r) -> if l = Nil then Node(findInLeft L, remove (findInLeft L) L, R)
-                                                    else Node(findInRight R, L, remove (findInRight R) R)
+    | Node(c, L, R) -> match compare a c with
+                       | x when x < 0  -> Node(c, remove a L, R)
+                       | x when x > 0  -> Node(c, L, remove a R)
+                       | _             -> match (L, R) with
+                                          | Nil, Nil             -> Nil
+                                          | L  , Nil             -> L
+                                          | Nil, R               -> R
+                                          | L  , Node(_, Nil, _) -> Node(findInLeft L, remove (findInLeft L) L, R)
+                                          | _  , _               -> Node(findInRight R, L, remove (findInRight R) R)
+
 let rec CLRprint t =
     match t with
     | Nil           -> printf ""
-    | Node(c, L, R) -> printf "%A " c
-                       CLRprint L 
+    | Node(c, L, R) -> printf "%d " c
+                       CLRprint L
                        CLRprint R
 
 let rec LCRprint t =
     match t with
     | Nil           -> printf ""
     | Node(c, L, R) -> LCRprint L
-                       printf "%A " c
+                       printf "%d " c
                        LCRprint R
 
 let rec LRCprint t =
@@ -53,7 +56,7 @@ let rec LRCprint t =
     | Nil           -> printf ""
     | Node(c, L, R) -> LRCprint L
                        LRCprint R
-                       printf "%A " c
+                       printf "%d " c
 
 let rec map f t = 
     match t with
