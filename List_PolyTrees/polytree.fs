@@ -1,4 +1,4 @@
-﻿(* Some operations (insert, remove, print) with binary search trees
+﻿(* Some operations (map, fold, copy) with binary search trees
 (expectation: 3,5 h; reality: 4 h)
 by Sokolova Polina *)
 
