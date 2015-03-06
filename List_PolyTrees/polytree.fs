@@ -98,5 +98,5 @@ let main args =
     printfn "fold (multiplication): %A" (fold (fun acc x -> x * acc) 1 myTree3)
     printfn "sum:  %A" (fold (fun acc x -> x + acc) 0 myTree3)
     printfn "min:  %A" (fold min None myTree3)
-    printfn "copy of myTree: %A" (fold (fun t x -> insert x t) Nil myTree3)
+    printfn "copy of myTree3: %A" (fold (fun t x -> insert x t) Nil myTree3)
     0
