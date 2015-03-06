@@ -1,4 +1,4 @@
-﻿(* Some operations (map, fold, copy) with binary search trees
+(* Some operations (map, fold, copy) with binary search trees
 (expectation: 3,5 h; reality: 4 h)
 by Sokolova Polina *)
 
@@ -13,13 +13,13 @@ let rec insert a t =
 
 let rec findInRight t =
     match t with
-    | Nil -> 0
+    | Nil             -> 0
     | Node(c, Nil, R) -> c
     | Node(c, L  , R) -> findInRight L
  
 let rec findInLeft t =
     match t with
-    | Nil -> 0
+    | Nil             -> 0
     | Node(c, L, Nil) -> c
     | Node(c, L, R  ) -> findInLeft R
 
@@ -57,12 +57,12 @@ let rec LRCprint t =
 
 let rec map f t = 
     match t with
-    | Nil -> Nil
+    | Nil           -> Nil
     | Node(c, L, R) -> Node(f c, map f L, map f R)
 
 let rec fold f a t =
     match t with
-    | Nil -> a
+    | Nil           -> a
     | Node(c, L, R) -> fold f (fold f (f a c) L) R
 
 let rec min a b =
