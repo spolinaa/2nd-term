@@ -71,7 +71,7 @@ let rec fold f a t =
     | Node(c, L, R) -> fold f (fold f (f a c) L) R
 
 let sum a t = 
-    fold (fun x y -> x + y) a t //Does not work for tree of float
+    fold (+) a t //Does not work for tree of float
 
 let min t =
     fold (fun a b ->
@@ -81,9 +81,7 @@ let min t =
                     else Some b) None t
 
 let copy t =
-    match t with
-    | Nil -> Nil
-    | _   -> fold (fun tree x -> insert x tree) Nil t
+    fold (fun tree x -> insert x tree) Nil t
 
 [<EntryPoint>]
 let main args =
