@@ -1,5 +1,5 @@
 ﻿(* Some functions (reverse, filter, map, horner's method) for list
-(expectation: 2,5 h; reality: 3 h)
+(expectation: 2,5 h; reality: 3,5 h)
 by Sokolova Polina *)
 
 //List.iter : ('a -> unit) -> 'a list -> unit
@@ -13,7 +13,10 @@ let map f l =
     List.fold (fun acc node -> f node :: acc) [] (reverse l)
 
 let horner l x =
-    (List.fold (fun acc num -> (num + acc) * x) 0 (reverse l)) / x
+    printfn "\nx = %A" x
+    printf "Коэффициенты (начиная со старшей степени): "
+    (List.fold (fun acc num -> printf "%A " num
+                               (num + acc) * x) 0 (reverse l)) / x
 
 [<EntryPoint>]
 let main args =
@@ -23,5 +26,5 @@ let main args =
     printfn "reverse:         %A" (reverse myList)
     printfn "filter (x > 4):  %A" (filter (fun x -> x > 4) myList)
     printfn "map (x * 2 + 1): %A" (map (fun x -> x * 2 + 1) myList)
-    printfn "horner: %A" (horner myList x) 
+    printfn "\nResult of horner's method: %A" (horner myList x) 
     0
