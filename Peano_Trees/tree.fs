@@ -1,6 +1,6 @@
-﻿(* Some operations (insert, remove, print) with binary search trees
-(expectation: 4 h; reality: 4 h)
-by Sokolova Polina *)
+ (* Some operations (insert, remove, print) with binary search trees
+  (expectation: 4 h; reality: 4 h)
+  by Sokolova Polina *)
 
 type Tree = Nil | Node of int * Tree * Tree
 
@@ -17,7 +17,7 @@ let rec findInRight t =
     | Nil             -> 0
     | Node(c, Nil, _) -> c
     | Node(_, L  , _) -> findInRight L
- 
+
 let rec findInLeft t =
     match t with
     | Nil             -> 0
@@ -28,20 +28,20 @@ let rec remove a t =
     match t with
     | Nil           -> Nil
     | Node(c, L, R) -> match compare a c with
-                       | x when x < 0 -> Node(c, remove a L, R)
-                       | x when x > 0 -> Node(c, L, remove a R)
-                       | _            -> match (L, R) with 
-                                         | Nil, Nil             -> Nil
-                                         | L  , Nil             -> L
-                                         | Nil, R               -> R
-                                         | L  , Node(_, Nil, _) -> Node(findInLeft L, remove (findInLeft L) L, R)
-                                         | _  , _               -> Node(findInRight R, L, remove (findInRight R) R)
+                       | x when x < 0  -> Node(c, remove a L, R)
+                       | x when x > 0  -> Node(c, L, remove a R)
+                       | _             -> match (L, R) with
+                                          | Nil, Nil             -> Nil
+                                          | L  , Nil             -> L
+                                          | Nil, R               -> R
+                                          | L  , Node(_, Nil, _) -> Node(findInLeft L, remove (findInLeft L) L, R)
+                                          | _  , _               -> Node(findInRight R, L, remove (findInRight R) R)
 
 let rec CLRprint t =
     match t with
     | Nil           -> printf ""
     | Node(c, L, R) -> printf "%d " c
-                       CLRprint L 
+                       CLRprint L
                        CLRprint R
 
 let rec LCRprint t =
