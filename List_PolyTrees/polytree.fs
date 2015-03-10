@@ -77,8 +77,7 @@ let min t =
     fold (fun a b ->
         match a with
         | None   -> Some b
-        | Some a -> if a < b then Some a
-                    else Some b) None t
+        | Some a -> Some (min a b)) None t
 
 let copy t =
     fold (fun tree x -> insert x tree) Nil t
