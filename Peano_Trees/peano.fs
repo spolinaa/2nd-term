@@ -42,8 +42,8 @@ let rec power b a  =
 let main args =
     let a = S ( S ( S ( S ( S Zero ))))
     let b = S ( S ( S Zero ))
-    printf "%A\n" (PeanoToString (plus a b))
-    printf "%A\n" (PeanoToString (minus a b))
-    printf "%A\n" (PeanoToString (multi a b))
-    printf "%A\n" (PeanoToString (power b a))
+    printf "Plus: %A\n" (PeanoToString (plus a b))
+    printf "Minus: %A\n" (PeanoToString (minus a b))
+    printf "Miltiplication: %A\n" (PeanoToString (multi a b))
+    printf "Power: %A\n" (PeanoToString (power b a))
     0
