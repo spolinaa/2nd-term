@@ -10,7 +10,7 @@ let filter f l =
     List.fold (fun acc node -> if f node then node :: acc
                                else acc) [] (reverse l)
 let map f l = 
-    List.fold (fun acc node -> f node :: acc) [] (reverse l)
+    List.fold (fun acc node -> f node :: acc) [] (reverse l) 
 
 let horner l x =
     printfn "\nx = %A" x

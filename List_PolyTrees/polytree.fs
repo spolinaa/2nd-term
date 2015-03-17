@@ -68,10 +68,10 @@ let rec map f t =
 let rec fold f a t =
     match t with
     | Nil           -> a
-    | Node(c, L, R) -> fold f (fold f (f a c) L) R
+    | Node(c, L, R) -> fold f (fold f (f a c) L) R 
 
-let sum a t = 
-    fold (+) a t //Does not work for tree of float
+let rec inline sum t = 
+    fold (+) Unchecked.defaultof<'A> t 
 
 let min t =
     fold (fun a b ->
@@ -80,7 +80,7 @@ let min t =
         | Some a -> Some (min a b)) None t
 
 let copy t =
-    fold (fun tree x -> insert x tree) Nil t
+    fold (fun tree x -> insert x tree) Nil t 
 
 [<EntryPoint>]
 let main args =
@@ -91,21 +91,21 @@ let main args =
     printfn "1. myTree: %A\n" myTree
     printfn "map (increase by 1):   %A\n" (map (fun x -> (x + 1)) myTree)
     printfn "fold (mutliplication): %A" (fold (fun acc x -> x * acc) 1 myTree)
-    printfn "sum:  %A" (sum 0 myTree)
+    printfn "sum:  %A" (sum myTree)
     printfn "min:  %A\n" (min myTree)
     printfn "copy of myTree: %A" (copy myTree)
     printf "\n\n"
     printfn "2. myTree2: %A\n" myTree2
     printfn "map (increase by 1.5): %A\n" (map (fun x -> (x + 1.5)) myTree2)
     printfn "fold (multiplication): %A" (fold (fun acc x -> x * acc) 1.0 myTree2)
-    printfn "sum:  %A" (fold (fun acc x -> x + acc) 0.0 myTree2)
+    printfn "sum:  %A" (sum myTree2)
     printfn "min:  %A\n" (min myTree2)
     printfn "copy of myTree2: %A" (copy myTree2)
     printf "\n\n"
     printfn "3. myTree3: %A" myTree3
     printfn "map (increase by 1):   %A" (map (fun x -> (x + 1)) myTree3)
     printfn "fold (multiplication): %A" (fold (fun acc x -> x * acc) 1 myTree3)
-    printfn "sum:  %A" (sum 0 myTree3)
+    printfn "sum:  %A" (sum myTree3)
     printfn "min:  %A" (min myTree3)
     printfn "copy of myTree3: %A" (copy myTree3)
     printf "\n\n"
