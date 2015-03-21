@@ -4,7 +4,7 @@ by Sokolova Polina *)
 
 type IGraph<'A> =
     interface
-        abstract IsEdge : int -> int -> bool
+        abstract IsEdge    : int  -> int -> bool
         abstract NumberOfV : unit -> int
         abstract NumberOfE : unit -> int
     end
