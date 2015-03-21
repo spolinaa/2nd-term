@@ -1,4 +1,4 @@
-﻿(* Interfaces of Graph
+﻿(* Interfaces of PolyList
 (expectation: 5 h; reality: 4,5 h)
 by Sokolova Polina *)
 
