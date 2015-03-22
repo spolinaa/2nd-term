@@ -5,17 +5,17 @@ by Sokolova Polina *)
 type IList<'A> = 
     abstract InsertB     : 'A -> unit
     abstract InsertE     : 'A -> unit
-    abstract InsertByNum : 'A -> int -> unit
-    abstract DeleteB     : unit
-    abstract DeleteE     : unit
-    abstract DeleteByNum : int -> unit
+    abstract InsertByNum : 'A -> int -> bool
+    abstract DeleteB     : bool
+    abstract DeleteE     : bool
+    abstract DeleteByNum : int -> bool
     abstract Find        : ('A -> bool) -> Option<'A>
     abstract ReturnList  : 'A list
     abstract ReturnArray : 'A []
     abstract Concat      : IList<'A> -> unit
     abstract Printf      : unit
 
-type ADTList<'A> (list : 'A list) =
+type ADTList<'A when 'A : equality> (list : 'A list) =
     class
         let mutable l = list
 
@@ -31,32 +31,32 @@ type ADTList<'A> (list : 'A list) =
             member s.InsertByNum var num =
                 let rec insert e count : 'A list =
                     match e with
-                    | []        -> failwith "Not enough data!"
-                    | h :: list -> match compare count num with
-                                   | x when x < 0 -> h :: (insert list (count + 1))
-                                   | x when x = 0 -> var :: (h :: list)
-                                   | _            -> failwith "Wrong argument!"
-                l <- insert l 1 
+                    | []        -> []
+                    | h :: list -> if count = 0 then var :: (h :: list)
+                                   else h :: (insert list (count - 1))
+                l <- insert l num
+                if (l = []) then false
+                else true
             member s.DeleteB =
                 match l with
-                | []        -> failwith "An empty list!"
-                | h :: list -> l <- list   
+                | []        -> false
+                | h :: list -> l <- list; true   
             member s.DeleteE =
                 let rec delete e =
                     match e with
-                    | [] -> failwith "An empty list!"
+                    | []        -> []
                     | h :: []   -> []
                     | h :: list -> h :: (delete list)
-                l <- delete l
+                if (l = []) then false
+                else l <- delete l; true
             member s.DeleteByNum num =
                 let rec delete e count : 'A list =
                     match e with
-                    | []        -> failwith "Not enough data!"
-                    | h :: list -> match compare count num with
-                                   | x when x < 0 -> h :: (delete list (count + 1))
-                                   | x when x = 0 -> list
-                                   | _            -> failwith "Wrong argument!"
-                l <- delete l 1
+                    | []        -> []
+                    | h :: list -> if count = 0 then list
+                                   else h :: (delete list (count - 1))
+                if l.Length <= num then false
+                else l <- delete l num; true
             member s.Find p =
                 let rec find e =
                     match e with
@@ -87,13 +87,19 @@ type ArrayList<'A> (array : 'A []) =
             member s.InsertE a = 
                 arr <- Array.append arr [|a|]
             member s.InsertByNum var num =
-                arr <- Array.append (Array.append arr.[0..(num - 1)] [|var|]) arr.[num..(arr.Length - 1)]
+                if num >= arr.Length then false
+                else arr <- Array.append (Array.append arr.[0..(num - 1)] [|var|]) 
+                                          arr.[num..(arr.Length - 1)]; true
             member s.DeleteB =
-                arr <- Array.append arr.[1..(arr.Length - 1)] [||]  
+                arr <- Array.append arr.[1..(arr.Length - 1)] [||]
+                true
             member s.DeleteE =
                 arr <- Array.append arr.[0..(arr.Length - 2)] [||]
+                true
             member s.DeleteByNum num =
-                arr <- Array.append arr.[0..(num - 1)] arr.[(num + 1)..(arr.Length - 1)]
+                if num >= arr.Length then false
+                else arr <- Array.append arr.[0..(num - 1)] 
+                            arr.[(num + 1)..(arr.Length - 1)]; true
             member s.Find p =
                 Array.tryFind p arr
             member s.ReturnList = Array.toList arr
@@ -108,61 +114,62 @@ type ArrayList<'A> (array : 'A []) =
 let main args =
     let list1 = [1; 5; 0; 7; 2; 5; 3; 8; 9]
     let list2 = [2; 5; 6]
-    let MyList1 = new ADTList<int> (list1)
-    let MyList2 = new ADTList<int> (list2)
+    let MyList1 = new ADTList<int> (list1) :> IList<int>
+    let MyList2 = new ADTList<int> (list2) :> IList<int>
     printf "MyList1                  : " 
-    (MyList1 :> IList<int>).Printf
+    MyList1.Printf
     printf "Add 18 to the beginning  : "
-    (MyList1 :> IList<int>).InsertB 18
-    (MyList1 :> IList<int>).Printf
+    MyList1.InsertB 18
+    MyList1.Printf
     printf "Add 256 to the end       : "
-    (MyList1 :> IList<int>).InsertE 256
-    (MyList1 :> IList<int>).Printf
+    MyList1.InsertE 256
+    MyList1.Printf
     printf "Add 1 to the 7th place   : "
-    (MyList1 :> IList<int>).InsertByNum 1 7
-    (MyList1 :> IList<int>).Printf
+    let a = MyList1.InsertByNum 1 7
+    MyList1.Printf
     printf "Delete from the beginning: "
-    (MyList1 :> IList<int>).DeleteB 
-    (MyList1 :> IList<int>).Printf
+    let a = MyList1.DeleteB 
+    MyList1.Printf
     printf "Delete from the end      : "
-    (MyList1 :> IList<int>).DeleteE 
-    (MyList1 :> IList<int>).Printf
+    let a = MyList1.DeleteE 
+    MyList1.Printf
     printf "Delete from the 6th place: "
-    (MyList1 :> IList<int>).DeleteByNum 6
-    (MyList1 :> IList<int>).Printf
+    let a = MyList1.DeleteByNum 6
+    MyList1.Printf
     printf "MyList2                  : " 
-    (MyList2 :> IList<int>).Printf
+    MyList2.Printf
     printf "Concat MyList1 & MyList2 : "
-    (MyList1 :> IList<int>).Concat MyList2
-    (MyList1 :> IList<int>).Printf
+    MyList1.Concat MyList2
+    MyList1.Printf
 
+    printfn ""
     let array1 = [|'n'; 'e'; 'v'; 'e'; 'r'; 'g'; 'a'; 'v'; 'e'; 'u'; 'p'|] 
     let array2 = [|','; 'd'; 'u'; 'd'; 'e'; '!'|]
-    let MyArray1 = new ArrayList<char> (array1)
-    let MyArray2 = new ArrayList<char> (array2)
+    let MyArray1 = new ArrayList<char> (array1) :> IList<char>
+    let MyArray2 = new ArrayList<char> (array2) :> IList<char>
     printf "MyArray1                  : " 
-    (MyArray1 :> IList<char>).Printf
+    MyArray1.Printf
     printf "Add 'I' to the beginning  : "
-    (MyArray1 :> IList<char>).InsertB 'I'
-    (MyArray1 :> IList<char>).Printf
+    MyArray1.InsertB 'I'
+    MyArray1.Printf
     printf "Add '!' to the end        : "
-    (MyArray1 :> IList<char>).InsertE '!'
-    (MyArray1 :> IList<char>).Printf
+    MyArray1.InsertE '!'
+    MyArray1.Printf
     printf "Add 'a' to the 8th place  : " // нумерация с 0
-    (MyArray1 :> IList<char>).InsertByNum 'i' 8
-    (MyArray1 :> IList<char>).Printf
+    let a = MyArray1.InsertByNum 'i' 8
+    MyArray1.Printf
     printf "Delete from the 7th place : "
-    (MyArray1 :> IList<char>).DeleteByNum 7
-    (MyArray1 :> IList<char>).Printf
+    let a = MyArray1.DeleteByNum 7
+    MyArray1.Printf
     printf "Delete from the beginning : "
-    (MyArray1 :> IList<char>).DeleteB 
-    (MyArray1 :> IList<char>).Printf
+    let a = MyArray1.DeleteB 
+    MyArray1.Printf
     printf "Delete from the end       : "
-    (MyArray1 :> IList<char>).DeleteE 
-    (MyArray1 :> IList<char>).Printf
+    let a = MyArray1.DeleteE 
+    MyArray1.Printf
     printf "MyArray2                  : " 
-    (MyArray2 :> IList<char>).Printf
+    MyArray2.Printf
     printf "Concat MyArray1 & MyArray2: "
-    (MyArray1 :> IList<char>).Concat MyArray2
-    (MyArray1 :> IList<char>).Printf
+    MyArray1.Concat MyArray2
+    MyArray1.Printf
     0
