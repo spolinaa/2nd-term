@@ -109,8 +109,7 @@ Windows (5)  -  OS X (2)
             |
        Windows (6)*\n" 
   let MyNetwork = new LocalNetwork (OS, array, infect)
-  let c = [|for i in [0 .. infect.Length - 1] -> new Computer(OS.[i], infect.[i], i)|]
-  for i = 0 to 6 do
+  for i = 0 to (infect.Length - 1) do
     MyNetwork.LetsInfect
     MyNetwork.Status
   0
