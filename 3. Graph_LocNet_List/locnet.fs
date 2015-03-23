@@ -51,7 +51,6 @@ type LocalNetwork (os : string [], connected : bool [,], infection : bool []) =
         for k = 0 to n do
           if a.[i, k] then 
             let r = System.Random().NextDouble()
-            let reaction = c.[k].IsInfected
             c.[k].Infection r
       count <- count + 1
     member s.Status  =
@@ -99,6 +98,7 @@ let main args =
   Array2D.set array 6 5 true
   Array2D.set array 0 6 true
   Array2D.set array 6 0 true
+ 
   printfn "        MyNetwork:\n  
   OS X (0)   -  OS X (1)
                  | 
