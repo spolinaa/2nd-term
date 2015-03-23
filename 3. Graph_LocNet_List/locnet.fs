@@ -1,5 +1,5 @@
 ﻿(* Model of local network
-(expectation: 3 h; reality: 3,5 h)
+(expectation: 3 h; reality: 4 h)
 by Sokolova Polina *)
 
 type IGraph =
@@ -9,15 +9,14 @@ type IGraph =
   end
 
 type ArrayGraph (array : bool [,]) =
-    class
-        let a = array
-        let n = Array2D.length1 array 
+  class
+    let a = array
+    let n = Array2D.length1 array 
 
-        interface IGraph with
-            member s.IsEdge p q = 
-                a.[p, q]
-            member s.NumberOfV () = n
-    end
+    interface IGraph with
+      member s.IsEdge p q = a.[p, q]
+      member s.NumberOfV () = n
+  end
 
 let probability os =
   match os with
@@ -25,7 +24,6 @@ let probability os =
   | "Linux"   -> 0.3
   | "Windows" -> 0.6
   | _         -> failwith "Not supported OS!"
-
 
 type Computer (os : string, infected : bool, number : int) =
   class
@@ -42,7 +40,8 @@ type LocalNetwork (os : string [], connected : bool [,], infection : bool []) =
   class
     inherit ArrayGraph (connected)
     let a = connected
-    let c = [|for i in [0 .. infection.Length - 1] -> new Computer(os.[i], infection.[i], i)|]
+    let c = [|for i in [0 .. infection.Length - 1] -> 
+      new Computer(os.[i], infection.[i], i)|]
     let mutable count = 0
 
     member s.LetsInfect =
@@ -108,6 +107,7 @@ let main args =
 Windows (5)  -  OS X (2)
             |
        Windows (6)*\n" 
+
   let MyNetwork = new LocalNetwork (OS, array, infect)
   for i = 0 to (infect.Length - 1) do
     MyNetwork.LetsInfect
