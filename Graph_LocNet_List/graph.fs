@@ -78,11 +78,11 @@ let From (graph : IGraph<'A>, a) =
         else ()
     res
 
-type IMarkedGraph<'B, 'A> =
+type IMarkedGraph<'A> =
     interface
         inherit IGraph<'A>
 
-        abstract ToMark : int -> 'B
+        abstract ToMark : int -> 'A
     end
 
 
