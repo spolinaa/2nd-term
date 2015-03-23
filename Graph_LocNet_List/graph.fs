@@ -44,7 +44,7 @@ type ListGraph<'A> (list : int list []) =
                 Array.fold (fun acc e -> acc + List.length e) 0 l 
     end
    
-let To (graph : IGraph<'A>, a) =
+let to_ (graph : IGraph<'A>, a) =
     let n = graph.NumberOfV ()
     let array = Array.create n 0
     let mutable res = []
@@ -61,7 +61,7 @@ let To (graph : IGraph<'A>, a) =
         else ()
     res
 
-let From (graph : IGraph<'A>, a) =
+let from_ (graph : IGraph<'A>, a) =
     let n = graph.NumberOfV ()
     let array = Array.create n 0
     let mutable res = []
@@ -110,9 +110,9 @@ let main args =
     printfn "Number of Vertices: %A" (MyGraph2.NumberOfV ())
     printfn "Number of Edges: %A\n" (MyGraph2.NumberOfE ())
 
-    printfn "MyGraph1. From 1 to: %A" (To (MyGraph1, 1))
-    printfn "MyGraph2. From 3 to: %A\n" (To (MyGraph2, 3))
+    printfn "MyGraph1. From 1 to: %A" (to_ (MyGraph1, 1))
+    printfn "MyGraph2. From 3 to: %A\n" (to_ (MyGraph2, 3))
 
-    printfn "MyGraph1. To 0 from: %A" (From (MyGraph1, 0))
-    printfn "MyGraph2. To 2 from: %A" (From (MyGraph2, 2))
+    printfn "MyGraph1. To 0 from: %A" (from_ (MyGraph1, 0))
+    printfn "MyGraph2. To 2 from: %A" (from_ (MyGraph2, 2))
     0
