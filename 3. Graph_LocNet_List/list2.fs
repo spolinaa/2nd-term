@@ -79,7 +79,6 @@ type ADTList<'A when 'A : equality> (list : 'A list) =
 type ArrayList<'A> (array : 'A []) =
     class
         let mutable arr = array 
-        member s.ReturnArray = arr
 
         interface IList<'A> with 
             member s.InsertB a =
