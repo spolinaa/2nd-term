@@ -2,7 +2,7 @@
 (expectation: 5 h; reality: 9 h)
 by Sokolova Polina *)
 
-type IGraph<'A> =
+type IGraph =
     interface
         abstract IsEdge    : int  -> int -> bool
         abstract NumberOfV : unit -> int
@@ -14,7 +14,7 @@ type ArrayGraph<'A> (array : bool [,]) =
         let a = array
         let n = Array2D.length1 array 
 
-        interface IGraph<'A> with
+        interface IGraph with
             member s.IsEdge p q = 
                 a.[p, q]
             member s.NumberOfV () = n
@@ -31,7 +31,7 @@ type ListGraph<'A> (list : int list []) =
         let l = list
         let n = list.Length 
 
-        interface IGraph<'A> with
+        interface IGraph with
             member s.IsEdge p q =
                 let f = fun acc ver -> if ver = q then acc + 1
                                        else acc
@@ -44,7 +44,7 @@ type ListGraph<'A> (list : int list []) =
                 Array.fold (fun acc e -> acc + List.length e) 0 l 
     end
    
-let to_ (graph : IGraph<'A>, a) =
+let to_ (graph : IGraph, a) =
     let n = graph.NumberOfV ()
     let array = Array.create n 0
     let mutable res = []
@@ -61,7 +61,7 @@ let to_ (graph : IGraph<'A>, a) =
         else ()
     res
 
-let from_ (graph : IGraph<'A>, a) =
+let from_ (graph : IGraph, a) =
     let n = graph.NumberOfV ()
     let array = Array.create n 0
     let mutable res = []
@@ -80,7 +80,7 @@ let from_ (graph : IGraph<'A>, a) =
 
 type IMarkedGraph<'A> =
     interface
-        inherit IGraph<'A>
+        inherit IGraph
 
         abstract ToMark : int -> 'A
     end
@@ -96,7 +96,7 @@ let main args =
     Array2D.set array 3 1 true
     Array2D.set array 3 2 true
     printfn "MyGraph1: \n%A\n" array
-    let MyGraph1 = new ArrayGraph<int> (array) :> IGraph<int>
+    let MyGraph1 = new ArrayGraph<int> (array) :> IGraph
     printfn "Edge from 2 to 3: %A" (MyGraph1.IsEdge 2 3) 
     printfn "Edge from 0 to 3: %A" (MyGraph1.IsEdge 0 3)
     printfn "Number of Vertices: %A" (MyGraph1.NumberOfV ())
@@ -104,7 +104,7 @@ let main args =
 
     let list = [|[1]; [0]; [0; 1; 3]; [0; 1]|]
     printfn "MyGraph2: %A\n" list
-    let MyGraph2 = new ListGraph<int> (list) :> IGraph<int>
+    let MyGraph2 = new ListGraph<int> (list) :> IGraph
     printfn "Edge from 0 to 3: %A" (MyGraph2.IsEdge 0 3) 
     printfn "Edge from 2 to 1: %A" (MyGraph2.IsEdge 2 1)
     printfn "Number of Vertices: %A" (MyGraph2.NumberOfV ())
