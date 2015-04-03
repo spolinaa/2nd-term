@@ -1,5 +1,5 @@
 (* Tests for tasks 28 - 29
-(expectation: 3 h; reality: 5 h)
+(expectation: 3 h; reality: 5,5 h)
 by Sokolova Polina *)
 
 
@@ -88,35 +88,38 @@ let to_emptyArray () =
   let graph = new ArrayGraph<int> (a) :> IGraph<int>
   Assert.AreEqual (to_ (graph, 0), [])
 
-[<Test>]
-let to_outOfIndex1 () =
+[<TestFixture>]
+type ``Out of index (to)`` () =
   let a = Array2D.create 4 4 false
   let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (to_ (graph, 7), []) 
 
-[<Test>]
-let to_outOfIndex2 () =
-  let a = Array2D.create 4 4 false
-  let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (to_ (graph, -2), [])
+  [<Test>]
+  member x.``Index 7 of 4`` () =
+    Assert.AreEqual (to_ (graph, 7), []) 
 
-[<Test>]
-let to_edgeYes () =
-  let a = Array2D.create 4 4 false
-  Array2D.set a 0 1 true
-  Array2D.set a 0 2 true
-  Array2D.set a 3 0 true
-  let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (to_ (graph, 0), [1; 2])
+  [<Test>]
+  member x.``Index -2 of 4`` () =
+    Assert.AreEqual (to_ (graph, -2), [])
 
-[<Test>]
-let to_edgeNo () =
+[<TestFixture>]
+type ``Ways from a vertice`` () =
   let a = Array2D.create 4 4 false
-  Array2D.set a 0 1 true
-  Array2D.set a 0 2 true
-  Array2D.set a 3 0 true
+
   let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (to_ (graph, 4), [])
+
+  [<Test>]
+  member x.``Ways from 0`` () =
+    Array2D.set a 0 1 true
+    Array2D.set a 0 2 true
+    Array2D.set a 3 0 true
+    Assert.AreEqual (to_ (graph, 0), [1; 2])
+
+  [<Test>]
+  member x.``Ways from 4`` () =
+    Array2D.set a 0 1 true
+    Array2D.set a 0 2 true
+    Array2D.set a 3 0 true
+    Assert.AreEqual (to_ (graph, 4), [])
 
 [<Test>]
 let from_emptyArray () =
@@ -124,17 +127,18 @@ let from_emptyArray () =
   let graph = new ArrayGraph<int> (a) :> IGraph<int>
   Assert.AreEqual (from_ (graph, 0), [])
 
-[<Test>]
-let from_outOfIndex1 () =
+[<TestFixture>]
+type ``Out of index (from)`` () =
   let a = Array2D.create 4 4 false
   let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (from_ (graph, 7), []) 
 
-[<Test>]
-let from_outOfIndex2 () =
-  let a = Array2D.create 4 4 false
-  let graph = new ArrayGraph<int> (a) :> IGraph<int>
-  Assert.AreEqual (from_ (graph, -2), [])
+  [<Test>]
+  member x.``Index 7 of 4`` () = 
+    Assert.AreEqual (from_ (graph, 7), []) 
+
+  [<Test>]
+  member x.``Index -2 of 4`` () =
+    Assert.AreEqual (from_ (graph, -2), [])
 
 [<Test>]
 let from_edgeYes () =
