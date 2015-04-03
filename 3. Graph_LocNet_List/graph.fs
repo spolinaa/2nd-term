@@ -52,13 +52,11 @@ let to_ (graph : IGraph, a) =
     let rec wayTo k =
         for i = 0 to (n - 1) do
             if (graph.IsEdge k i) && (array.[i] = 0) 
-            then array.[i] <- 1; wayTo i;  
-            else ()
+            then array.[i] <- 1; wayTo i  
     wayTo a
     array.[a] <- 0
     for i = (n - 1) downto 0 do
         if (array.[i] = 1) then res <- i :: res
-        else ()
     res
 
 let from_ (graph : IGraph, a) =
@@ -69,13 +67,11 @@ let from_ (graph : IGraph, a) =
     let rec wayFrom k =
         for i = 0 to (n - 1) do
             if (graph.IsEdge i k) && (array.[i] = 0) 
-            then array.[i] <- 1; wayFrom i;  
-            else ()
+            then array.[i] <- 1; wayFrom i  
     wayFrom a
     array.[a] <- 0
     for i = (n - 1) downto 0 do
         if (array.[i] = 1) then res <- i :: res
-        else ()
     res
 
 type IMarkedGraph<'A> =
