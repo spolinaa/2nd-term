@@ -1,5 +1,5 @@
-(* Tests for tasks 28 - 29
-(expectation: 4 h; reality: 4 h)
+(* Tests for task 26 
+(expectation: 4 h; reality: 5 h)
 by Sokolova Polina *)
 
 module t2
@@ -37,7 +37,9 @@ type Computer (os : string, infected : bool, number : int) =
     member s.Infection (var : float) =
       if not i && var <= probability os then i <- true
     member s.State =
-      if s.IsInfected then printf "*" else printf " "
+      let mutable state = ""
+      if s.IsInfected then state <- "+" else state <- "-"
+      state
   end
 
 type LocalNetwork (os : string [], connected : bool [,], infection : bool []) =
@@ -47,34 +49,39 @@ type LocalNetwork (os : string [], connected : bool [,], infection : bool []) =
     let c = [|for i in [0 .. infection.Length - 1] -> new Computer(os.[i], infection.[i], i)|]
     let mutable count = 0
 
-    member s.LetsInfect =
+    member s.LetsInfect rand =
       let n = infection.Length - 1
       let bad = Array.filter (fun i -> c.[i].IsInfected) [|0 .. n|]
       for i in bad do
         for k = 0 to n do
           if a.[i, k] then 
-            let r = System.Random().NextDouble()
+            let r = rand
             c.[k].Infection r
       count <- count + 1
+    member s.SmallStatus =
+      let mutable res = ""
+      for i = 0 to (os.Length - 1) do
+        res <- res + c.[i].State
+      res
     member s.Status  =
       printfn "\n\n       %A.MyNetwork:\n" count 
       printf "  OS X (0)" 
-      c.[0].State 
+      printf "%A" c.[0].State 
       printf "  -  OS X (1)" 
-      c.[1].State
+      printf "%A" c.[1].State
       printfn  "\n                   | "
       printf " Linux (3)" 
-      c.[3].State 
+      printf "%A" c.[3].State 
       printf "  -  Linux (4)" 
-      c.[4].State
+      printf "%A" c.[4].State
       printfn "\n    |              |"
       printf "Windows (5)" 
-      c.[5].State 
+      printf "%A" c.[5].State 
       printf " -  OS X (2)" 
-      c.[2].State
+      printf "%A" c.[2].State
       printfn "\n             |"
       printf "       Windows (6)" 
-      c.[6].State
+      printf "%A" c.[6].State
       printfn "\n" 
   end
 
@@ -90,9 +97,6 @@ let ``Linux probability must be 0.3`` () =
 let ``OS X probability must be 0.1`` () =
   Assert.AreEqual(probability "OS X", 0.1)
 
-//[<Test>] 
-//let ``System.Exception because of unsupported OS`` () =
-
 [<TestFixture>] 
 type ``Given an infected computer`` () =
   let c = new Computer("Windows", true, 8)
@@ -102,8 +106,8 @@ type ``Given an infected computer`` () =
     Assert.AreEqual(c.IsInfected, true)
 
   [<Test>] 
-  member x.``Sign of infected computer is "*"`` () =
-    Assert.AreEqual(c.State, printf "*")
+  member x.``Sign of infected computer is "+"`` () =
+    Assert.AreEqual(c.State, "+")
 
 type ``Given an uninfected computer, becoming infected`` () =
 
@@ -113,10 +117,10 @@ type ``Given an uninfected computer, becoming infected`` () =
     Assert.AreEqual(c.IsInfected, false)
 
   [<Test>] 
-  member x.``Sign of infected computer is "*"`` () =
+  member x.``Sign of infected computer is "+"`` () =
     let c = new Computer("Linux", false, 8)
     c.Infection 0.2
-    Assert.AreEqual(c.State, printf "*")
+    Assert.AreEqual(c.State, "+")
 
 type ``Given an uninfected computer, cannot become infected`` () =
     
@@ -129,8 +133,74 @@ type ``Given an uninfected computer, cannot become infected`` () =
   member x.``No sign for uninfected computer`` () =
     let c = new Computer("Windows", false, 8)
     c.Infection 0.7
-    Assert.AreEqual(c.State, printf " ")
+    Assert.AreEqual(c.State, "-")
+   
+[<TestCase (1.0, Result = "---+--+")>]
+[<TestCase (0.0, Result = "+++++++")>]
 
+let ``Work of local network in 5 steps`` random =
+  let OS = [|"OS X"; "OS X"; "OS X"; "Linux"; "Linux"; "Windows"; "Windows"|]
+  let infect = [|false; false; false; true; false; false; true|]
+  let array = Array2D.create 7 7 false // Вершины 0 - 6
+  Array2D.set array 0 1 true
+  Array2D.set array 1 4 true
+  Array2D.set array 2 4 true
+  Array2D.set array 2 5 true
+  Array2D.set array 2 6 true
+  Array2D.set array 3 4 true
+  Array2D.set array 3 5 true
+  Array2D.set array 5 6 true
+  Array2D.set array 1 0 true
+  Array2D.set array 4 1 true
+  Array2D.set array 4 2 true
+  Array2D.set array 5 2 true
+  Array2D.set array 6 2 true
+  Array2D.set array 4 3 true
+  Array2D.set array 5 3 true
+  Array2D.set array 6 5 true
+  Array2D.set array 0 6 true
+  Array2D.set array 6 0 true
+  let MyNetwork = new LocalNetwork (OS, array, infect)
+  for i = 0 to 4 do
+    MyNetwork.LetsInfect random
+  MyNetwork.SmallStatus
+
+[<TestCase (1.0, Result = "---+--+")>]
+[<TestCase (0.0, Result = "---+--+")>]
+[<TestCase (0.5, Result = "---+--+")>]
+
+let ``Work of not connected computers in 5 steps`` random =
+  let OS = [|"OS X"; "OS X"; "OS X"; "Linux"; "Linux"; "Windows"; "Windows"|]
+  let infect = [|false; false; false; true; false; false; true|]
+  let array = Array2D.create 7 7 false // Вершины 0 - 6
+  let MyNetwork = new LocalNetwork (OS, array, infect)
+  for i = 0 to 4 do
+    MyNetwork.LetsInfect random
+  MyNetwork.SmallStatus
+
+[<TestCase (1.0, Result = "---+--+")>]
+[<TestCase (0.5, Result = "---+-++")>]
+[<TestCase (0.2, Result = "---++++")>]
+[<TestCase (0.0, Result = "---++++")>]
+
+let ``Work of connected similar computers in 5 steps`` random =
+  let OS = [|"OS X"; "OS X"; "OS X"; "Linux"; "Linux"; "Windows"; "Windows"|]
+  let infect = [|false; false; false; true; false; false; true|]
+  let array = Array2D.create 7 7 false // Вершины 0 - 6
+  Array2D.set array 0 1 true
+  Array2D.set array 1 0 true
+  Array2D.set array 0 2 true
+  Array2D.set array 2 0 true
+  Array2D.set array 2 1 true
+  Array2D.set array 1 2 true
+  Array2D.set array 3 4 true
+  Array2D.set array 4 3 true
+  Array2D.set array 5 6 true
+  Array2D.set array 6 5 true
+  let MyNetwork = new LocalNetwork (OS, array, infect)
+  for i = 0 to 4 do
+    MyNetwork.LetsInfect random
+  MyNetwork.SmallStatus
 [<EntryPoint>]
 let main argv = 
-  0
+  0 
