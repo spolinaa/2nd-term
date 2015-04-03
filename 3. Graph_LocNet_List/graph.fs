@@ -35,7 +35,7 @@ type ListGraph<'A> (list : int list []) =
             member s.IsEdge p q =
                 let f = fun acc ver -> if ver = q then acc + 1
                                        else acc
-                let fold = List.fold (f) 0 l.[p]
+                let fold = List.fold f 0 l.[p]
                 if (fold = 0)
                 then false
                 else true
