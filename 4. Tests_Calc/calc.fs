@@ -1,5 +1,5 @@
-﻿(* Calculator for positive numbers
-(expectation: 3 h; reality: 39 h)
+﻿(* Calculator for positive numbers (with variables)
+(expectation: 3 h; reality: 42 h)
 by Sokolova Polina *)
 
 module calculator
@@ -7,13 +7,21 @@ open NUnit.Framework
 
 type Tree<'A> = Nil | Node of Tree<string> * string * Tree<string>
 
-let lists (s : string) =
+let lists (s : string, a : int []) =
   let length = s.Length
   let rec make t i (n : string) (child : Tree<string>) : Tree<string> =
     let mutable num = n
     if i < length then
       match s.[i] with
-      | ' ' -> make t (i + 1) num child
+      | '[' -> let mutable var = null
+               let mutable j = i + 1
+               while s.[j] <> ']' do
+                 var <- var + s.[j].ToString()
+                 j <- j + 1
+               if (a.Length - 1) < int var then failwith "Too many variables"
+               else num <- a.[int var].ToString(); make t (j + 1) num child 
+
+      | ' '| '\n' -> make t (i + 1) num child
       | '0'| '1'| '2'| '3'| '4'| '5'| '6'| '7'| '8'| '9' -> make t (i + 1) (num + s.[i].ToString()) child
       | '^'| '*'| '/'| '%'| '+'| '-' -> let mutable tree = t   
                                         if num = null then
@@ -122,7 +130,16 @@ let rec calc t =
 [<TestCase("4 * 7 / 5", Result = 5)>]
 [<TestCase("2 * 16 + (14 - 2 * (5 + 13 * (6 - 1) ^ (3 - 2)) + 33)", Result = -61)>]
 let ``Calculator tests`` (expression) =
-  calc (lists expression)
+  calc (lists (expression, [||]))
+
+[<TestCase("2 * [0]", [|5|], Result = 10)>]
+[<TestCase("(1 + [0])^([1] + 1) * ([2] + [3])", [|2; 3; 5; 2|], Result = 567)>]
+[<TestCase("[0] - (5 * 4) * (5 - 3)", [|50|], Result = 10)>]
+[<TestCase("25 + (7 / 3) % (2 * 2) ^ [0] - [1]", [|3; 1|], Result = 26)>]
+[<TestCase("4 * 7 / [0]", [|5|], Result = 5)>]
+[<TestCase("[0]^[1] - [2]", [|2; 7; 28|], Result = 100)>]
+let ``Calculator tests with variables`` (expression, array) =
+  calc (lists (expression, array))
 
 [<EntryPoint>]
 let main args =
