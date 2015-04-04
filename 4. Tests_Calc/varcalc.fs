@@ -30,7 +30,8 @@ let lists (s : string, a : int []) =
                                           | _ -> ()
                                         else
                                           match t with
-                                          | Nil -> tree <- Node(Node(Nil, num, Nil), s.[i].ToString(), (make Nil (i + 1) null Nil))
+                                          | Nil -> 
+                                            tree <- Node(Node(Nil, num, Nil), s.[i].ToString(), (make Nil (i + 1) null Nil))
                                           | _ -> ()
 
                                         let rec myfind i count fu =
