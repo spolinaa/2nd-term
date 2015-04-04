@@ -1,4 +1,4 @@
-﻿(* Calculator for positive numbers (with variables)
+(* Calculator for positive numbers (with variables)
 (expectation: 3 h; reality: 42 h)
 by Sokolova Polina *)
 
