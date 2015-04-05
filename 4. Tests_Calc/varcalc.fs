@@ -1,5 +1,5 @@
 (* Calculator for positive numbers (with variables)
-(expectation: 3 h; reality: 42 h)
+(expectation: 3 h; reality: 45 h)
 by Sokolova Polina *)
 
 module calculator
@@ -19,11 +19,11 @@ let lists (s : string, a : int []) =
                  var <- var + s.[j].ToString()
                  j <- j + 1
                if (a.Length - 1) < int var then failwith "Too many variables"
-               else num <- a.[int var].ToString(); make t (j + 1) num child 
-
+               else num <- a.[int var].ToString(); make t (j + 1) num child
       | ' '| '\n' -> make t (i + 1) num child
       | '0'| '1'| '2'| '3'| '4'| '5'| '6'| '7'| '8'| '9' -> make t (i + 1) (num + s.[i].ToString()) child
-      | '^'| '*'| '/'| '%'| '+'| '-' -> let mutable tree = t   
+      |'+'| '-' | '^'| '*'| '/'| '%' -> 
+                                        let mutable tree = t   
                                         if num = null then
                                           match t with
                                           | Nil -> tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
@@ -34,15 +34,27 @@ let lists (s : string, a : int []) =
                                             tree <- Node(Node(Nil, num, Nil), s.[i].ToString(), (make Nil (i + 1) null Nil))
                                           | _ -> ()
 
-                                        let rec myfind i count fu =
-                                          if i < length && count > - 1 then
-                                            match s.[i] with
-                                            | '(' -> myfind (i + 1) (count + 1) fu
-                                            | ')' -> myfind (i + 1) (count - 1) fu
-                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then i
-                                                                                 else myfind (i + 1) count fu
-                                            | _ -> myfind (i + 1) count fu
-                                          else -1
+                                        let rec turn_1 tree sign =
+                                          if sign > 0 then 
+                                            match tree with
+                                            | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
+                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
+                                                                           if c = "+" || c = "-" then
+                                                                             Node(turn_1 (Node(L, C, l)) (sign - 1), c, r) 
+                                                                           else tree
+                                            | _ -> tree
+                                          else tree
+
+                                        let rec turn_2 tree sign =
+                                          if sign > 0 then
+                                            match tree with
+                                            | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
+                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
+                                                                           match c with
+                                                                           | "+"| "-"| "*"| "/"| "%" -> Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
+                                                                           | _ -> tree
+                                            | _ -> tree
+                                          else tree
 
                                         let plus_minus i =
                                           match s.[i] with
@@ -54,15 +66,19 @@ let lists (s : string, a : int []) =
                                           | '+'| '-'| '*'| '/'| '%' -> true
                                           | _ -> false
 
-                                        let rebuild t =
-                                          match t with
-                                            | Node(L, C, Node(l, c, r)) -> Node(Node(L, C, l), c, r)
-                                            | _ -> t
+                                        let rec myfind i count fu sign =
+                                          if i < length && count > - 1 then
+                                            match s.[i] with
+                                            | '(' -> myfind (i + 1) (count + 1) fu sign
+                                            | ')' -> myfind (i + 1) (count - 1) fu sign
+                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then myfind (i + 1) count fu (sign + 1)
+                                                                                 else myfind (i + 1) count fu sign
+                                            | _ -> myfind (i + 1) count fu sign
+                                          else sign
 
-                                        if s.[i] = '+' || s.[i] = '-' then 
-                                          if (myfind (i + 1) 0 plus_minus) > 0 then tree <- rebuild tree
-                                        elif (myfind (i + 1) 0 all) > 0 then tree <- rebuild tree
-                                        tree 
+                                        printfn "%A" s.[i]
+                                        if s.[i] = '+' || s.[i] = '-' then turn_1 tree (myfind (i + 1) 0 plus_minus 0)
+                                        else turn_2 tree (myfind (i + 1) 0 all 0)
       | '(' ->  let mutable tree = make Nil (i + 1) null Nil
                 let rec f i =
                   if i < length then
@@ -130,6 +146,8 @@ let rec calc t =
 [<TestCase("25 + (7 / 3) % (2 * 2) ^ 3 - 1", Result = 26)>]
 [<TestCase("4 * 7 / 5", Result = 5)>]
 [<TestCase("2 * 16 + (14 - 2 * (5 + 13 * (6 - 1) ^ (3 - 2)) + 33)", Result = -61)>]
+[<TestCase("5 + 3 - 2 + 4", Result = 10)>]
+[<TestCase("3^2 - 7 * 14 + 89", Result = 0)>]
 let ``Calculator tests`` (expression) =
   calc (lists (expression, [||]))
 
@@ -138,7 +156,13 @@ let ``Calculator tests`` (expression) =
 [<TestCase("[0] - (5 * 4) * (5 - 3)", [|50|], Result = 10)>]
 [<TestCase("25 + (7 / 3) % (2 * 2) ^ [0] - [1]", [|3; 1|], Result = 26)>]
 [<TestCase("4 * 7 / [0]", [|5|], Result = 5)>]
-[<TestCase("[0]^[1] - [2]", [|2; 7; 28|], Result = 100)>]
+[<TestCase("[0]^[1] - [2] * [3] + [4]", [|2; 7; 28; 3; 1|], Result = 45)>]
+[<TestCase("[0] + (7 / 3) % (2 * 2) ^ [1] - [2]", [|25; 3; 1|], Result = 26)>]
+[<TestCase("4 * [0] / 5", [|5|], Result = 4)>]
+[<TestCase("2 * 16 + (14 - [0] * (5 + 13 * (6 - [1]) ^ (3 - [2])) + 296)", [|6; 4; 1|], Result = 0)>]
+[<TestCase("[0] + [1] - [2] - [3] + [4]", [|7; 2; 90; 8; 100|],  Result = 11)>]
+[<TestCase("[0] * [1] / [2] * [3]", [|5; 2; 3; 4|], Result = 12)>]
+[<TestCase("[0] ^ 3 - [1] ^ [2] + 4 ^ [3]", [|5; 3; 5; 4|], Result = 138)>]
 let ``Calculator tests with variables`` (expression, array) =
   calc (lists (expression, array))
 
