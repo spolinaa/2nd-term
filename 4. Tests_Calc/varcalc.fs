@@ -22,8 +22,7 @@ let lists (s : string, a : int []) =
                else num <- a.[int var].ToString(); make t (j + 1) num child
       | ' '| '\n' -> make t (i + 1) num child
       | '0'| '1'| '2'| '3'| '4'| '5'| '6'| '7'| '8'| '9' -> make t (i + 1) (num + s.[i].ToString()) child
-      |'+'| '-' | '^'| '*'| '/'| '%' -> 
-                                        let mutable tree = t   
+      |'+'| '-' | '^'| '*'| '/'| '%' -> let mutable tree = t   
                                         if num = null then
                                           match t with
                                           | Nil -> tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
