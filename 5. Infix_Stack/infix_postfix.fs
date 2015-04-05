@@ -28,7 +28,7 @@ let lists (s : string) =
       match s.[i] with
       | ' '| '\n' -> make t (i + 1) num child
       | '0'| '1'| '2'| '3'| '4'| '5'| '6'| '7'| '8'| '9' -> make t (i + 1) (num + s.[i].ToString()) child
-      | '^'| '*'| '/'| '%'| '+'| '-' -> let mutable tree = t   
+      |'+'| '-' | '^'| '*'| '/'| '%' -> let mutable tree = t   
                                         if num = null then
                                           match t with
                                           | Nil -> tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
@@ -39,15 +39,28 @@ let lists (s : string) =
                                             tree <- Node(Node(Nil, num, Nil), s.[i].ToString(), (make Nil (i + 1) null Nil))
                                           | _ -> ()
 
-                                        let rec myfind i count fu =
-                                          if i < length && count > - 1 then
-                                            match s.[i] with
-                                            | '(' -> myfind (i + 1) (count + 1) fu
-                                            | ')' -> myfind (i + 1) (count - 1) fu
-                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then i
-                                                                                 else myfind (i + 1) count fu
-                                            | _ -> myfind (i + 1) count fu
-                                          else -1
+                                        let rec turn_1 tree sign =
+                                          if sign > 0 then 
+                                            match tree with
+                                            | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
+                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
+                                                                           if c = "+" || c = "-" then
+                                                                             Node(turn_1 (Node(L, C, l)) (sign - 1), c, r) 
+                                                                           else tree
+                                            | _ -> tree
+                                          else tree
+
+                                        let rec turn_2 tree sign =
+                                          if sign > 0 then
+                                            match tree with
+                                            | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
+                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
+                                                                           match c with
+                                                                           | "+"| "-"| "*"| "/"| "%" -> 
+                                                                             Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
+                                                                           | _ -> tree
+                                            | _ -> tree
+                                          else tree
 
                                         let plus_minus i =
                                           match s.[i] with
@@ -59,15 +72,20 @@ let lists (s : string) =
                                           | '+'| '-'| '*'| '/'| '%' -> true
                                           | _ -> false
 
-                                        let rebuild t =
-                                          match t with
-                                            | Node(L, C, Node(l, c, r)) -> Node(Node(L, C, l), c, r)
-                                            | _ -> t
+                                        let rec myfind i count fu sign =
+                                          if i < length && count > - 1 then
+                                            match s.[i] with
+                                            | '(' -> myfind (i + 1) (count + 1) fu sign
+                                            | ')' -> myfind (i + 1) (count - 1) fu sign
+                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then 
+                                                                                   myfind (i + 1) count fu (sign + 1)
+                                                                                 else myfind (i + 1) count fu sign
+                                            | _ -> myfind (i + 1) count fu sign
+                                          else sign
 
-                                        if s.[i] = '+' || s.[i] = '-' then 
-                                          if (myfind (i + 1) 0 plus_minus) > 0 then tree <- rebuild tree
-                                        elif (myfind (i + 1) 0 all) > 0 then tree <- rebuild tree
-                                        tree 
+                                        printfn "%A" s.[i]
+                                        if s.[i] = '+' || s.[i] = '-' then turn_1 tree (myfind (i + 1) 0 plus_minus 0)
+                                        else turn_2 tree (myfind (i + 1) 0 all 0)
       | '(' ->  let mutable tree = make Nil (i + 1) null Nil
                 let rec f i =
                   if i < length then
@@ -100,11 +118,10 @@ let lists (s : string) =
 
   let mutable bte = make Nil 0 null Nil
   bte
-                         
+                   
 let read (name : string) =
   use stream = new StreamReader(name)
   stream.ReadToEnd()
-
 
 [<TestCase("4 * (3 + 2) - 7", Result = "4\n3\n2\n+\n*\n7\n-\n\n")>]
 [<TestCase("(3 - 1) ^ (4 + 1) - 5", Result = "3\n1\n-\n4\n1\n+\n^\n5\n-\n\n")>]
@@ -121,6 +138,8 @@ let read (name : string) =
 [<TestCase("25 + (7 / 3) % (2 * 2) ^ 3 - 1", Result = "25\n7\n3\n/\n2\n2\n*\n3\n^\n%\n+\n1\n-\n\n")>]
 [<TestCase("4 * 7 / 5", Result = "4\n7\n*\n5\n/\n\n")>]
 [<TestCase("2 * 16 + (14 - 2 * (5 + 13 * (6 - 1) ^ (3 - 2)) + 33)", Result = "2\n16\n*\n14\n2\n5\n13\n6\n1\n-\n3\n2\n-\n^\n*\n+\n*\n-\n33\n+\n+\n\n")>] 
+[<TestCase("5 + 3 - 2 + 4", Result = "5\n3\n+\n2\n-\n4\n+\n\n")>]
+[<TestCase("3^2 - 7 * 14 + 89", Result = "3\n2\n^\n7\n14\n*\n-\n89\n+\n\n")>]
 let ``Calculator tests`` (expression) =
   write("input.txt", expression)
   print (lists (read("input.txt")))
