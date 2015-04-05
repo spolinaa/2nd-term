@@ -51,7 +51,8 @@ let lists (s : string, a : int []) =
                                             | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
                                             | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
                                                                            match c with
-                                                                           | "+"| "-"| "*"| "/"| "%" -> Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
+                                                                           | "+"| "-"| "*"| "/"| "%" -> 
+                                                                            Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
                                                                            | _ -> tree
                                             | _ -> tree
                                           else tree
@@ -71,7 +72,8 @@ let lists (s : string, a : int []) =
                                             match s.[i] with
                                             | '(' -> myfind (i + 1) (count + 1) fu sign
                                             | ')' -> myfind (i + 1) (count - 1) fu sign
-                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then myfind (i + 1) count fu (sign + 1)
+                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then 
+                                                                                   myfind (i + 1) count fu (sign + 1)
                                                                                  else myfind (i + 1) count fu sign
                                             | _ -> myfind (i + 1) count fu sign
                                           else sign
