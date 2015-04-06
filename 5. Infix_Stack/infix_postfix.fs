@@ -140,6 +140,8 @@ let read (name : string) =
 [<TestCase("2 * 16 + (14 - 2 * (5 + 13 * (6 - 1) ^ (3 - 2)) + 33)", Result = "2\n16\n*\n14\n2\n5\n13\n6\n1\n-\n3\n2\n-\n^\n*\n+\n*\n-\n33\n+\n+\n\n")>] 
 [<TestCase("5 + 3 - 2 + 4", Result = "5\n3\n+\n2\n-\n4\n+\n\n")>]
 [<TestCase("3^2 - 7 * 14 + 89", Result = "3\n2\n^\n7\n14\n*\n-\n89\n+\n\n")>]
+[<TestCase("1 - 2 - 3", Result = "1\n2\n-\n3\n-\n\n")>]
+[<TestCase("3^1^2", Result = "3\n1\n2\n^\n^\n\n")>]
 let ``Calculator tests`` (expression) =
   write("input.txt", expression)
   print (lists (read("input.txt")))
