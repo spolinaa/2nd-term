@@ -7,7 +7,7 @@ module A
 open System.IO
 open NUnit.Framework
 
-type Tree<'A> = Nil | Node of Tree<string> * string * Tree<string>
+type Tree = Nil | Node of Tree * string * Tree
 
 let write (name : string, res : string) =
   use stream = new StreamWriter(name)
@@ -22,7 +22,7 @@ let print t =
 
 let lists (s : string) =
   let length = s.Length
-  let rec make t i (n : string) (child : Tree<string>) : Tree<string> =
+  let rec make t i (n : string) (child : Tree) : Tree =
     let mutable num = n
     if i < length then
       match s.[i] with
@@ -31,7 +31,8 @@ let lists (s : string) =
       |'+'| '-' | '^'| '*'| '/'| '%' -> let mutable tree = t   
                                         if num = null then
                                           match t with
-                                          | Nil -> tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
+                                          | Nil -> 
+                                            tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
                                           | _ -> ()
                                         else
                                           match t with
@@ -43,8 +44,7 @@ let lists (s : string) =
                                           if sign > 0 then 
                                             match tree with
                                             | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
-                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
-                                                                           if c = "+" || c = "-" then
+                                            | Node(L, C, Node(l, c, r)) -> if c = "+" || c = "-" then
                                                                              Node(turn_1 (Node(L, C, l)) (sign - 1), c, r) 
                                                                            else tree
                                             | _ -> tree
@@ -54,8 +54,7 @@ let lists (s : string) =
                                           if sign > 0 then
                                             match tree with
                                             | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
-                                            | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
-                                                                           match c with
+                                            | Node(L, C, Node(l, c, r)) -> match c with
                                                                            | "+"| "-"| "*"| "/"| "%" -> 
                                                                              Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
                                                                            | _ -> tree
@@ -83,7 +82,6 @@ let lists (s : string) =
                                             | _ -> myfind (i + 1) count fu sign
                                           else sign
 
-                                        printfn "%A" s.[i]
                                         if s.[i] = '+' || s.[i] = '-' then turn_1 tree (myfind (i + 1) 0 plus_minus 0)
                                         else turn_2 tree (myfind (i + 1) 0 all 0)
       | '(' ->  let mutable tree = make Nil (i + 1) null Nil
