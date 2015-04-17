@@ -1,5 +1,5 @@
 (* Tests for tasks 28 - 29
-(expectation: 3 h; reality: 4 h)
+(expectation: 3 h; reality: 4,5 h)
 by Sokolova Polina *)
 
 module t3
@@ -126,16 +126,13 @@ type ``Getting an empty list`` () =
   [<Test>]
   member x.``Add 10 to the end``() =
     let adt = new ADTList<int> ([]) :> IList<int>
-    adt.InsertB 10
+    adt.InsertE 10
     Assert.AreEqual(adt.ReturnList, [10])
 
-  [<Test>]
-  member x.``Add 5 to 3rd place``() =
-    Assert.AreEqual(adt.InsertByNum 5 3, false)
-
-  [<Test>]
-  member x.``Add 5 to 0 place``() =
-    Assert.AreEqual(adt.InsertByNum 5 0, false)
+  [<TestCase (3, Result = false)>]
+  [<TestCase (0, Result = false)>]
+  member x.``Add 5``(place) =
+    adt.InsertByNum 5 place
 
   [<Test>]
   member x.``Delete from the beginning``() =
@@ -160,7 +157,7 @@ type ``Getting an empty list`` () =
   [<Test>]
   member x.``Return an empty array``() =
     Assert.AreEqual(adt.ReturnArray, [||])
-
+  
   [<Test>]
   member x.``Concat with an empty list``() =
     let adt = new ADTList<int> ([]) :> IList<int>
@@ -189,20 +186,12 @@ type ``Getting a list of 1; 2; 3; 4; 5`` () =
     adt.InsertE 6
     Assert.AreEqual(adt.ReturnList, [1; 2; 3; 4; 5; 6])
 
-  [<Test>]
-  member x.``Add 7 to 2nd place``() =
+  [<TestCase(7, 2, Result = true)>]
+  [<TestCase(7, 7, Result = false)>]
+  [<TestCase(6, 6, Result = true)>]
+  member x.``Add a number on place``(number, place) =
     let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
-    Assert.AreEqual(adt.InsertByNum 7 2, true)
-
-  [<Test>]
-  member x.``Add 6 to 6 place``() =
-    let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
-    Assert.AreEqual(adt.InsertByNum 6 6, true)
-
-  [<Test>]
-  member x.``Add 7 to 7 place``() =
-    let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
-    Assert.AreEqual(adt.InsertByNum 7 7, false)
+    adt.InsertByNum number place
 
   [<Test>]
   member x.``Delete from the beginning``() =
@@ -214,15 +203,11 @@ type ``Getting a list of 1; 2; 3; 4; 5`` () =
     let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
     Assert.AreEqual(adt.DeleteE, true)
 
-  [<Test>]
-  member x.``Delete a number from the 1st place``() =
+  [<TestCase(1, Result = true)>]
+  [<TestCase(6, Result = false)>]
+  member x.``Delete a number from a place``(number) =
     let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
-    Assert.AreEqual(adt.DeleteByNum 1, true)
-
-  [<Test>]
-  member x.``Delete a number from the 6th place``() =
-    let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
-    Assert.AreEqual(adt.DeleteByNum 6, false)
+    adt.DeleteByNum number
 
   [<Test>]
   member x.``Find a number bigger than 10``() =
@@ -235,7 +220,7 @@ type ``Getting a list of 1; 2; 3; 4; 5`` () =
     Assert.AreEqual(adt.Find ((>) 3), Some 1)
   
   [<Test>]
-  member x.``Return an list``() =
+  member x.``Return a list``() =
     let adt = new ADTList<int> ([1; 2; 3; 4; 5]) :> IList<int>
     Assert.AreEqual(adt.ReturnList, [1; 2; 3; 4; 5])
 
@@ -272,17 +257,14 @@ type ``Getting an empty array`` () =
   [<Test>]
   member x.``Add 10 to the end``() =
     let array = new ArrayList<int> ([||]) :> IList<int>
-    array.InsertB 10
+    array.InsertE 10
     Assert.AreEqual(array.ReturnList, [10])
 
-  [<Test>]
-  member x.``Add 5 to 3rd place``() =
-    Assert.AreEqual(array.InsertByNum 5 3, false)
-
-  [<Test>]
-  member x.``Add 5 to 0 place``() =
+  [<TestCase(5, 0, Result = true)>]
+  [<TestCase(5, 3, Result = false)>]
+  member x.``Add a number``(number, place) =
     let array = new ArrayList<int> ([||]) :> IList<int>
-    Assert.AreEqual(array.InsertByNum 5 0, true)
+    array.InsertByNum number place
 
   [<Test>]
   member x.``Delete from the beginning``() =
@@ -336,20 +318,12 @@ type ``Getting an array of 1; 2; 3; 4; 5`` () =
     array.InsertE 6
     Assert.AreEqual(array.ReturnList, [1; 2; 3; 4; 5; 6])
 
-  [<Test>]
-  member x.``Add 7 to 1st place``() =
+  [<TestCase(7, 1, Result = true)>]
+  [<TestCase(6, -1, Result = false)>]
+  [<TestCase(7, 6, Result = false)>]
+  member x.``Add a number``(number, place) =
     let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
-    Assert.AreEqual(array.InsertByNum 7 1, true)
-
-  [<Test>]
-  member x.``Add 6 to -1 place``() =
-    let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
-    Assert.AreEqual(array.InsertByNum 6 -1, false)
-
-  [<Test>]
-  member x.``Add 7 to 6 place``() =
-    let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
-    Assert.AreEqual(array.InsertByNum 7 6, false)
+    array.InsertByNum number place
 
   [<Test>]
   member x.``Delete from the beginning``() =
@@ -361,15 +335,11 @@ type ``Getting an array of 1; 2; 3; 4; 5`` () =
     let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
     Assert.AreEqual(array.DeleteE, true)
 
-  [<Test>]
-  member x.``Delete a number from the 0 place``() =
+  [<TestCase(0, Result = true)>]
+  [<TestCase(5, Result = false)>]
+  member x.``Delete a number from the place``(place) =
     let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
-    Assert.AreEqual(array.DeleteByNum 0, true)
-
-  [<Test>]
-  member x.``Delete a number from the 5th place``() =
-    let array = new ArrayList<int> ([|1; 2; 3; 4; 5|]) :> IList<int>
-    Assert.AreEqual(array.DeleteByNum 5, false)
+    array.DeleteByNum place
 
   [<Test>]
   member x.``Find a number bigger than 10``() =
