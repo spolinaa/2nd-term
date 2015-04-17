@@ -32,7 +32,7 @@ type ADTList<'A when 'A : equality> (list : 'A list) =
                 let rec insert e count : 'A list =
                     match e with
                     | []        -> []
-                    | h :: list -> if count = 0 then var :: (h :: list)
+                    | h :: list -> if count = 0 then var :: e
                                    else h :: (insert list (count - 1))
                 l <- insert l num
                 if (l = []) then false
