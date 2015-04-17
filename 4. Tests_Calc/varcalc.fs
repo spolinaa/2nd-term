@@ -22,12 +22,7 @@ let lists (s : string, a : int []) =
                else num <- a.[int var].ToString(); make t (j + 1) num child
       | ' '| '\n' -> make t (i + 1) num child
       | '0'| '1'| '2'| '3'| '4'| '5'| '6'| '7'| '8'| '9' -> make t (i + 1) (num + s.[i].ToString()) child
-<<<<<<< HEAD
-      |'+'| '-' | '^'| '*'| '/'| '%' -> 
-                                        let mutable tree = t   
-=======
       |'+'| '-' | '^'| '*'| '/'| '%' -> let mutable tree = t   
->>>>>>> 16f6ed38d5eab25bebb0a980826cd415f9e0ebd9
                                         if num = null then
                                           match t with
                                           | Nil -> tree <- Node(child, s.[i].ToString(), (make Nil (i + 1) null Nil))
@@ -55,12 +50,8 @@ let lists (s : string, a : int []) =
                                             | Node(Node(Nil, x, Nil), y, Node(Nil, z, Nil)) -> tree
                                             | Node(L, C, Node(l, c, r)) -> printfn "c = %A" c
                                                                            match c with
-<<<<<<< HEAD
-                                                                           | "+"| "-"| "*"| "/"| "%" -> Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
-=======
                                                                            | "+"| "-"| "*"| "/"| "%" -> 
                                                                             Node(turn_2 (Node(L, C, l)) (sign - 1), c, r)
->>>>>>> 16f6ed38d5eab25bebb0a980826cd415f9e0ebd9
                                                                            | _ -> tree
                                             | _ -> tree
                                           else tree
@@ -80,12 +71,8 @@ let lists (s : string, a : int []) =
                                             match s.[i] with
                                             | '(' -> myfind (i + 1) (count + 1) fu sign
                                             | ')' -> myfind (i + 1) (count - 1) fu sign
-<<<<<<< HEAD
-                                            | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then myfind (i + 1) count fu (sign + 1)
-=======
                                             | '+'| '-' | '*'| '/'| '%'| '^'   -> if count = 0 && fu i then 
                                                                                    myfind (i + 1) count fu (sign + 1)
->>>>>>> 16f6ed38d5eab25bebb0a980826cd415f9e0ebd9
                                                                                  else myfind (i + 1) count fu sign
                                             | _ -> myfind (i + 1) count fu sign
                                           else sign
