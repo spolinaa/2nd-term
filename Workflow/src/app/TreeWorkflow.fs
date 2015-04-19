@@ -1,5 +1,5 @@
 ﻿(* Workflow for tree
-(expectation: 5 h; reality:  h)
+(expectation: 5 h; reality: 5,5 h)
 by Sokolova Polina *)
 
 module TreeWorkflow

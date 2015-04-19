@@ -1,4 +1,8 @@
-﻿module RingTest
+﻿(* Tests for RingWorkflow
+by Sokolova Polina
+*)
+
+module RingTest
 
 open RingWorkflow
 open NUnit.Framework

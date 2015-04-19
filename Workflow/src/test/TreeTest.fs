@@ -1,4 +1,8 @@
-﻿module TreeTest
+﻿(* Tests for TreeWorkflow
+by Sokolova Polina
+*)
+
+module TreeTest
 
 open TreeWorkflow
 open NUnit.Framework
