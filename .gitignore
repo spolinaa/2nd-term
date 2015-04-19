@@ -1,2 +1,4 @@
 *bin
 *obj
+*NUnit.Runners
+*NUnit.2.6.4
