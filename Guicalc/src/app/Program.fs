@@ -43,11 +43,7 @@ let action (but : Button) e =
                               | Op(a, b, c)   -> Op(calc e, num, Nil) 
   | "->"  ->  let delete =
                 let mutable l = calcOutput.Text.Length
-                let flag = 
-                  if l > 0 then
-                    if calcOutput.Text.[0] = '-' then true
-                    else false
-                  else false
+                let flag = (l > 0) && (calcOutput.Text.[0] = '-')
                 if flag then l <- l - 1
                 match l with
                 | x when x > 1 -> 
@@ -63,8 +59,7 @@ let action (but : Button) e =
               | Num x       -> delete 
               | Op(a, b, c) -> Op(a, b, delete)
   | "+/-" -> match e with
-             | Num x -> 
-               calcOutput.Text <- sprintf "%A" (-(int x)); Num ((-int x).ToString())
+             | Num x -> operation (-float x)
              | _     -> e
   | "√"   -> calcOutput.Text <- sprintf ""
              calc (Op(e, num, Nil)) 
@@ -80,7 +75,7 @@ let action (but : Button) e =
              | Op(Num a, b, Nil) -> 
                if b = "*" then calc (Op(Num a, b, Num ((float a / 100.0).ToString()))) 
                else e
-             | _ -> e
+             | _ -> calcOutput.Text <- sprintf "0"; e
   | "="   -> count e 
   | _     -> calcOutput.Text <- sprintf ""; Nil
 

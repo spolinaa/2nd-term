@@ -3,3 +3,8 @@
 *NUnit.Runners
 *NUnit.2.6.4
 *.userprefs
+*build
+*test
+*tools
+NuGet.exe
+
