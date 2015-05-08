@@ -209,5 +209,5 @@ Deg = 7
     printfn "\nDeg = %d" j
     for i = 1 to 20 do
       let a = makeArray j
-      duration (sprintf "  Thread : %A" i) (fun () -> k := findMax a i)
+      duration (sprintf "  Thread : %A" i) (fun () -> printf "%A, " (findMax a i))
   0
