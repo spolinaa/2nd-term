@@ -6,8 +6,6 @@ module Max
 
 open System.Threading
 
-exception EmptyArray
-
 let maxInRange (a : int []) l r =
   let mutable max = a.[l]
   for i in l .. r do
@@ -70,7 +68,6 @@ Deg = 1
   Thread : 18, Elapsed Time: 3
   Thread : 19, Elapsed Time: 4
   Thread : 20, Elapsed Time: 9
-
 Deg = 2
   Thread : 1, Elapsed Time: 0
   Thread : 2, Elapsed Time: 1
@@ -92,7 +89,6 @@ Deg = 2
   Thread : 18, Elapsed Time: 15
   Thread : 19, Elapsed Time: 31
   Thread : 20, Elapsed Time: 17
-
 Deg = 3
   Thread : 1, Elapsed Time: 1
   Thread : 2, Elapsed Time: 2
@@ -114,7 +110,6 @@ Deg = 3
   Thread : 18, Elapsed Time: 14
   Thread : 19, Elapsed Time: 17
   Thread : 20, Elapsed Time: 16
-
 Deg = 4
   Thread : 1, Elapsed Time: 1
   Thread : 2, Elapsed Time: 2
@@ -136,7 +131,6 @@ Deg = 4
   Thread : 18, Elapsed Time: 15
   Thread : 19, Elapsed Time: 14
   Thread : 20, Elapsed Time: 17
-
 Deg = 5
   Thread : 1, Elapsed Time: 1
   Thread : 2, Elapsed Time: 2
@@ -158,7 +152,6 @@ Deg = 5
   Thread : 18, Elapsed Time: 14
   Thread : 19, Elapsed Time: 13
   Thread : 20, Elapsed Time: 16
-
 Deg = 6
   Thread : 1, Elapsed Time: 5
   Thread : 2, Elapsed Time: 7
@@ -180,7 +173,6 @@ Deg = 6
   Thread : 18, Elapsed Time: 24
   Thread : 19, Elapsed Time: 16
   Thread : 20, Elapsed Time: 17
-
 Deg = 7
   Thread : 1, Elapsed Time: 35
   Thread : 2, Elapsed Time: 22
