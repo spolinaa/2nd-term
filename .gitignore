@@ -6,5 +6,6 @@
 *build
 *test
 *tools
-NuGet.exe
+*.exe
+
 
